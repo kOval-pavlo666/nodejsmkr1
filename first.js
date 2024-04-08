@@ -8,7 +8,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const dataFilePath = path.join(__dirname, 'requests.json');
-const mongodb_uri = "mongodb://localhost:27017/mkr1"
+const mongodb_uri = "mongodb://localhost:27017/nodemkr1"
+
+const calculateModel = require('./models/calculate.model');
 
 
 mongoose.connect(mongodb_uri).then(() => {
@@ -18,7 +20,7 @@ mongoose.connect(mongodb_uri).then(() => {
 app.use(bodyParser.json());
 
 // Endpoint для обчислення радіусів
-app.post('/calculate', (req, res) => {
+app.post('/calculate', async (req, res) => {
   const { side1, side2, side3 } = req.body;
 
   // Перевірка вхідних даних
@@ -37,7 +39,7 @@ app.post('/calculate', (req, res) => {
     input: { side1, side2, side3 },
     result: { inscribedRadius, circumscribedRadius }
   };
-
+  await calculateModel.create(requestData);
   fs.readFile(dataFilePath, 'utf8', (err, data) => {
     if (err) {
       console.error('Помилка зчитування JSON-файлу:', err);
@@ -50,7 +52,7 @@ app.post('/calculate', (req, res) => {
     }
 
     requests.push(requestData);
-
+    
     fs.writeFile(dataFilePath, JSON.stringify(requests, null, 2), (err) => {
       if (err) {
         console.error('Помилка запису у JSON-файл:', err);
@@ -60,7 +62,6 @@ app.post('/calculate', (req, res) => {
     });
   });
 
-  
 });
 
 // Запуск сервера
