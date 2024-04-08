@@ -1,0 +1,14 @@
+[
+  {
+    "timestamp": "2024-04-08T05:39:34.909Z",
+    "input": {
+      "side1": 2,
+      "side2": 3,
+      "side3": 4
+    },
+    "result": {
+      "inscribedRadius": 0.6454972243679028,
+      "circumscribedRadius": 2.0655911179772892
+    }
+  }
+]
