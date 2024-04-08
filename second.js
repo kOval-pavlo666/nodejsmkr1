@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Підключення до MongoDB
-mongoose.connect('mongodb://localhost:27017/productOfEvenDigitsDB', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost:27017/nodemkr1', { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'Помилка підключення до бази даних:'));
@@ -14,13 +14,7 @@ db.once('open', function() {
   console.log('Підключено до бази даних');
 });
 
-// Схема моделі для зберігання даних
-const NumberSchema = new mongoose.Schema({
-  number: { type: Number, required: true },
-  productOfEvenDigits: { type: Number, required: true }
-});
-
-const Number = mongoose.model('Number', NumberSchema);
+const secondModel = require('./models/second.model');
 
 // Middlewares
 app.use(bodyParser.json());
@@ -36,8 +30,7 @@ app.post('/product-of-even-digits', async (req, res) => {
   const product = findProductOfEvenDigits(n);
 
   try {
-    const number = new Number({ number: n, productOfEvenDigits: product });
-    await number.save();
+    await secondModel.create({ number: n, productOfEvenDigits: product });
     res.json({ product });
   } catch (error) {
     console.error('Помилка збереження даних у базі даних:', error);
